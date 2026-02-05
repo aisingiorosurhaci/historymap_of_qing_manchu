@@ -20,10 +20,20 @@
   const map = L.map('map').setView([41.8, 123.4], 7);
 
   const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+});
 
+  const satellite = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom: 19,
+    attribution: '&copy; Esri'
+  }
+);
+
+  satellite.addTo(leafletMap);
+  
   async function loadGeoJSON(url, options = {}) {
     const res = await fetch(url);
     const gj = await res.json();
@@ -45,13 +55,13 @@
       pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
     });
 
-    admin.addTo(map);
-    cities.addTo(map);
+    admin.addTo(leafletmap);
+    cities.addTo(leafletmap);
 
     const baseLayers = { "OSM": osm };
     const overlays = { "행정/경계": admin, "교통로": roads, "도시": cities };
 
-    L.control.layers(baseLayers, overlays, { collapsed: false }).addTo(map);
+    L.control.layers(baseLayers, overlays, { collapsed: false }).addTo(leafletmap);
   })();
 </script>
 </body>
