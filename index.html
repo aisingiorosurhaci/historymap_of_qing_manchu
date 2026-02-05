@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.1/leaflet.groupedlayercontrol.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.1/leaflet.groupedlayercontrol.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.polylinedecorator/1.7.0/leaflet.polylineDecorator.min.js"></script>
+  
   <style>
     html, body { height: 100%; margin: 0; }
     #map { height: 100%; }
@@ -106,6 +108,20 @@
 });
     const roads = await loadGeoJSON('./data/roads.geojson', { style: { weight: 3 }});
     const wpkangxi = await loadGeoJSON('./data/willowpalisade-kangxi.geojson', { style: wallStyle });
+    wpkangxi.addTo(map);
+
+    const railDecorator_kangxi = L.polylineDecorator(wpkangxi, {
+      patterns: [
+        {
+          repeat: 12,
+          offset: 0,
+          symbol: L.Symbol.dash({
+            pixelSize: 8,
+            pathOptions: { color: '#111', weight: 2, opacity: 0.9 }
+          })
+        }
+      ]
+    }).addTo(map);
     const wpqianlong = await loadGeoJSON('./data/willowpalisade-qianlong.geojson', { style: wallStyle });
     const cities = await loadGeoJSON('./data/cities.geojson', {
       pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
