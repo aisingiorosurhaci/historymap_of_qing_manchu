@@ -47,14 +47,15 @@
       pointToLayer: options.pointToLayer,
       onEachFeature: (feature, layer) => {
         const p = feature.properties || {};
-        const title = p.name || p.name_ko || p.name_zh || '정보';
+        p.NAME_FT || p.NAME_CH || p.NAME_PY || p.name || p.name_ko || p.name_zh || '정보';
         layer.bindPopup(`<b>${title}</b>`);
         if (options.label === true && layer instanceof L.CircleMarker) {
-    layer.bindTooltip(title, {
+    layer.bindTooltip(labelText, {
       permanent: true,
       direction: 'top',
       offset: [0, -6],
-      opacity: 1
+      opacity: 1,
+      className: 'plain-label'
       });
       }
     }
