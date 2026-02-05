@@ -58,7 +58,7 @@
     const chgisprov_pgn = await loadGeoJSON('./data/v6_1820_prov_pgn.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgispref_pgn = await loadGeoJSON('./data/v6_1820_pref_pgn.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgispref_pts = await loadGeoJSON('./data/v6_1820_pref_pts.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
-    const chgistwn_pts = await loadGeoJSON('./data/v6_1820_twn_pts.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
+    const chgistwn_pts = await loadGeoJSON('./data/v6_1820_twn_pts.geojson', {
      pointToLayer: (f, latlng) => L.circleMarker(latlng, {
     radius: 4,
     color: '#000000',
