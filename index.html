@@ -49,9 +49,15 @@
         const p = feature.properties || {};
         const title = p.name || p.name_ko || p.name_zh || '정보';
         layer.bindPopup(`<b>${title}</b>`);
-      }
+        if (options.label === true && layer instanceof L.CircleMarker) {
+    layer.bindTooltip(title, {
+      permanent: true,
+      direction: 'top',
+      offset: [0, -6],
+      opacity: 1
     });
   }
+}
 
   (async () => {
     const admin = await loadGeoJSON('./data/admin.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
@@ -59,6 +65,7 @@
     const chgispref_pgn = await loadGeoJSON('./data/v6_1820_pref_pgn.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgispref_pts = await loadGeoJSON('./data/v6_1820_pref_pts.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgistwn_pts = await loadGeoJSON('./data/v6_1820_twn_pts.geojson', {
+     label: true,
      pointToLayer: (f, latlng) => L.circleMarker(latlng, {
     radius: 4,
     color: '#000000',
