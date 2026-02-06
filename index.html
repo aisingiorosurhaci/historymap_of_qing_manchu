@@ -115,7 +115,14 @@
     fillOpacity: 1
   })
 });
-    const roads = await loadGeoJSON('./data/roads.geojson', { style: { weight: 3 }});
+    const dk_kx = await loadGeoJSON('./data/dorgi_karun_kangxi.geojson', { style: { weight: 3 }});
+    const dk_yz = await loadGeoJSON('./data/dorgi_karun_yongzheng.geojson', { style: { weight: 3 }});
+    const dk_ql = await loadGeoJSON('./data/dorgi_karun_qianlong.geojson', { style: { weight: 3 }});
+    const dk_jq = await loadGeoJSON('./data/dorgi_karun_jiaqing.geojson', { style: { weight: 3 }});
+    const tl_kx = await loadGeoJSON('./data/tulergi_karun_kangxi.geojson', { style: { weight: 3 }});
+    const tl_yz = await loadGeoJSON('./data/tulergi_karun_yongzheng.geojson', { style: { weight: 3 }});
+    const tl_ql = await loadGeoJSON('./data/tulergi_karun_qianlong.geojson', { style: { weight: 3 }});
+    const tl_jq = await loadGeoJSON('./data/tulergi_karun_jiaqing.geojson', { style: { weight: 3 }});
     const admin_v1 = await loadGeoJSON('./data/admin_lv1.geojson', {
       style: {
         color: '#000000',
@@ -132,22 +139,23 @@
     const groupedOverlays = {
       "강희기 카룬": {
         "유조변(강희-옹정)": wpkangxi,
-        "카룬(강희기)": karun_kangxi
+        "邊臺(강희기)": dk_kx,
+        "카룬(강희기)": tl_kx
       },
       "옹정기 카룬": {
         "유조변(강희-옹정)": wpkangxi,
-        "변내카룬(옹정기)": dorgi_karun_yongzheng,
-        "변외카룬(옹정기)": tulergi_karun_yongzheng
+        "변내카룬(옹정기)": dk_yz,
+        "변외카룬(옹정기)": tl_yz
       },
       "건륭기 카룬": {
         "유조변(건륭이후)": wpqianlong,
-        "변내카룬(건륭기)": dorgi_karun_qianlong,
-        "변외카룬(건륭기)": tulergi_karun_qianlong
+        "변내카룬(건륭기)": dk_ql,
+        "변외카룬(건륭기)": tl_ql
       },
       "가경기 카룬": {
         "유조변(건륭이후)": wpqianlong,
-        "변내카룬(가경기)": dorgi_karun_jiaqing,
-        "변외카룬(가경기)": tulergi_karun_jiaqing
+        "변내카룬(가경기)": dk_jq,
+        "변외카룬(가경기)": tl_jq
       },
       "기타": {
         "성경장군 관할 경계선": admin_v1,
