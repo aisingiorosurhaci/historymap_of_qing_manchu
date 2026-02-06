@@ -115,14 +115,38 @@
     fillOpacity: 1
   })
 });
-    const dk_kx = await loadGeoJSON('./data/dorgi_karun_kangxi.geojson', { style: { weight: 3 }});
-    const dk_yz = await loadGeoJSON('./data/dorgi_karun_yongzheng.geojson', { style: { weight: 3 }});
-    const dk_ql = await loadGeoJSON('./data/dorgi_karun_qianlong.geojson', { style: { weight: 3 }});
-    const dk_jq = await loadGeoJSON('./data/dorgi_karun_jiaqing.geojson', { style: { weight: 3 }});
-    const tl_kx = await loadGeoJSON('./data/tulergi_karun_kangxi.geojson', { style: { weight: 3 }});
-    const tl_yz = await loadGeoJSON('./data/tulergi_karun_yongzheng.geojson', { style: { weight: 3 }});
-    const tl_ql = await loadGeoJSON('./data/tulergi_karun_qianlong.geojson', { style: { weight: 3 }});
-    const tl_jq = await loadGeoJSON('./data/tulergi_karun_jiaqing.geojson', { style: { weight: 3 }});
+    const dk_kx = await loadGeoJSON('./data/dorgi_karun_kangxi.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const dk_yz = await loadGeoJSON('./data/dorgi_karun_yongzheng.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const dk_ql = await loadGeoJSON('./data/dorgi_karun_qianlong.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const dk_jq = await loadGeoJSON('./data/dorgi_karun_jiaqing.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const tl_kx = await loadGeoJSON('./data/tulergi_karun_kangxi.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const tl_yz = await loadGeoJSON('./data/tulergi_karun_yongzheng.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const tl_ql = await loadGeoJSON('./data/tulergi_karun_qianlong.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
+    const tl_jq = await loadGeoJSON('./data/tulergi_karun_jiaqing.geojson', {
+      pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 })
+    });
+
     const admin_v1 = await loadGeoJSON('./data/admin_lv1.geojson', {
       style: {
         color: '#000000',
