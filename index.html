@@ -101,8 +101,6 @@
   });
 }
   (async () => {
-    const admin = await loadGeoJSON('./data/admin.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
-    admin_v1.addTo(map);
     const chgisprov_pgn = await loadGeoJSON('./data/v6_1820_prov_pgn.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgispref_pgn = await loadGeoJSON('./data/v6_1820_pref_pgn.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
     const chgispref_pts = await loadGeoJSON('./data/v6_1820_pref_pts.geojson', { style: { weight: 2, fillOpacity: 0.1 }});
@@ -155,6 +153,7 @@
         opacity: 1
       }
     });
+    admin_v1.addTo(map);
     const wpkangxi = await loadGeoJSON('./data/willowpalisade-kangxi.geojson', { style: willowpalisade });
     const wpqianlong = await loadGeoJSON('./data/willowpalisade-qianlong.geojson', { style: willowpalisade });
     const cities = await loadGeoJSON('./data/cities.geojson', {
