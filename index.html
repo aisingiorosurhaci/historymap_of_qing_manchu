@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./css/site.css" />
 
   <style>
-    html, body { height: 100%; margin: 0; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
     .leaflet-tooltip.plain-label {
     background: transparent;
     border: none;
@@ -51,6 +51,16 @@
 #map{
   height: calc(100% - 44px);
   margin-top: 44px;
+}
+.leaflet-control-layers {
+  max-height: calc(100vh - 60px);
+  overflow: hidden;
+}
+.leaflet-control-layers-overlays {
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
 }
   </style>
 </head>
