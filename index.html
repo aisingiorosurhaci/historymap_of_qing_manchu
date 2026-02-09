@@ -104,6 +104,19 @@
     .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-name{
       display: flex !important;
     }
+    .group-fold-btn{
+  margin-left: auto;
+  appearance: none;
+  border: 1px solid #ccc;
+  background: rgba(255,255,255,0.9);
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+}
   </style>
 </head>
 <body>
@@ -174,33 +187,41 @@
       });
     }
 
-    function attachGroupFoldButtons(layerCtl) {
-      const container = layerCtl.getContainer();
-      if (!container) return;
+function attachGroupFoldButtons() {
+  const container = layerCtl.getContainer();
+  if (!container) return;
 
-      const groupEls = container.querySelectorAll('.leaflet-control-layers-group');
+  const groupEls = container.querySelectorAll('.leaflet-control-layers-group');
 
-      groupEls.forEach(groupEl => {
-        const nameEl = groupEl.querySelector('.leaflet-control-layers-group-name');
-        if (!nameEl) return;
-      
-        if (nameEl.querySelector('.group-fold-btn')) return;
+  groupEls.forEach(groupEl => {
+    const nameEl = groupEl.querySelector('.leaflet-control-layers-group-name');
+    if (!nameEl) return;
+    if (nameEl.querySelector('.group-fold-btn')) return;
 
-        const btn = document.createElement('span');
-        btn.className = 'group-fold-btn';
-        btn.textContent = '▾';
+    const listEl =
+      nameEl.nextElementSibling ||
+      groupEl.querySelector('.leaflet-control-layers-group-list') ||
+      groupEl.querySelector('.leaflet-control-layers-group-items') ||
+      groupEl.querySelector('.leaflet-control-layers-group-layers');
 
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'group-fold-btn';
+    btn.textContent = '▾';
 
-          const collapsed = groupEl.classList.toggle('is-collapsed');
-          btn.textContent = collapsed ? '▸' : '▾';
-        });
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-        nameEl.appendChild(btn);
-      });
-    }
+      const collapsed = groupEl.classList.toggle('is-collapsed');
+      btn.textContent = collapsed ? '▸' : '▾';
+
+      if (listEl) listEl.style.display = collapsed ? 'none' : '';
+    });
+
+    nameEl.appendChild(btn);
+  });
+}
 
     function collapseGroupsOnStart(layerCtl, groupNames) {
       const container = layerCtl.getContainer();
