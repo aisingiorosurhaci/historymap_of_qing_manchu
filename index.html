@@ -208,10 +208,14 @@ const layerCtl = L.control.groupedLayers(baseLayers, groupedOverlays, {
   groupCheckboxes: false
 }).addTo(map);
 
-
+const ctlEl = layerCtl.getContainer();
+      
 L.DomEvent.disableClickPropagation(layerCtl.getContainer());
 L.DomEvent.disableScrollPropagation(layerCtl.getContainer());
-      
+L.DomEvent.on(ctlEl, 'dblclick', L.DomEvent.stop);
+L.DomEvent.on(ctlEl, 'mousedown', L.DomEvent.stopPropagation);
+L.DomEvent.on(ctlEl, 'touchstart', L.DomEvent.stopPropagation);
+
     })().catch(err => {
       console.error(err);
       alert(err.message || err);
