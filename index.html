@@ -83,13 +83,11 @@
       justify-content: center;
     }
     .group-fold-btn:hover{ background: #f0f0f0; }
-    .leaflet-control-layers-group.is-collapsed > .leaflet-control-layers-group-list{
+    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-list,
+    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-items,
+    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-layers{
       display: none !important;
-    }
-    .leaflet-control-layers-group.is-collapsed > .leaflet-control-layers-group-items,
-    .leaflet-control-layers-group.is-collapsed > .leaflet-control-layers-group-layers{
-      display: none !important;
-    }
+      }
   </style>
 </head>
 <body>
@@ -268,16 +266,30 @@
         }
       };
       
-      const layerCtl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-        collapsed: false,
-        groupsCollapsible: false,
-        groupCheckboxes: false
-      }).addTo(map);
-      
-      setTimeout(() => {
-        attachGroupFoldButtons(layerCtl);
-        collapseGroupsOnStart(layerCtl, ["참고자료_CHGIS (1820)"]);
-      }, 200);
+const layerCtl = L.control.groupedLayers(baseLayers, groupedOverlays, {
+  collapsed: false,
+  groupsCollapsible: false,
+  groupCheckboxes: false
+}).addTo(map);
+
+setTimeout(() => {
+  attachGroupFoldButtons(layerCtl);
+
+  const collapseNames = ["참고자료_CHGIS (1820)"];
+  const container = layerCtl.getContainer();
+  container.querySelectorAll('.leaflet-control-layers-group').forEach(groupEl => {
+    const nameEl = groupEl.querySelector('.leaflet-control-layers-group-name');
+    if (!nameEl) return;
+
+    const label = (nameEl.textContent || "").replace(/[▾▸]/g, "").trim();
+    if (!collapseNames.includes(label)) return;
+
+    groupEl.classList.add('is-collapsed');
+
+    const btn = nameEl.querySelector('.group-fold-btn');
+    if (btn) btn.textContent = '▸';
+  });
+}, 200);
 
     })().catch(err => {
       console.error(err);
