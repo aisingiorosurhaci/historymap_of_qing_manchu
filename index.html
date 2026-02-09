@@ -68,14 +68,6 @@
   margin-top: 6px;
   user-select: none;
 }
-.leaflet-control-layers-group-name::before{
-  content: "▾ ";
-  display: inline-block;
-  width: 1em;
-}
-.leaflet-control-layers-group.collapsed .leaflet-control-layers-group-name::before{
-  content: "▸ ";
-}
 .leaflet-control-layers-group-name{
   display: flex;
   align-items: center;
@@ -106,6 +98,8 @@
 .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-layers{
   display: none !important;
 }
+.leaflet-control-layers-group-name::before { content: "" !important; display:none !important; }
+.group-fold-btn{ margin-left: auto; }
   </style>
 </head>
 <body>
@@ -310,7 +304,6 @@ function attachGroupFoldButtons() {
     nameEl.append(btn);
   });
 }
-.group-fold-btn{ margin-left: auto; }
 setTimeout(attachGroupFoldButtons, 0);
     
 const collapseGroupsOnStart = [
