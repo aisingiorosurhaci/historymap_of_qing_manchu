@@ -4,10 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mukden's Karun map</title>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.1/leaflet.groupedlayercontrol.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-groupedlayercontrol/0.6.1/leaflet.groupedlayercontrol.min.js"></script>
+
   <link rel="stylesheet" href="./css/site.css" />
 
   <style>
@@ -25,10 +28,14 @@
       border-bottom: 1px solid #ddd;
     }
     .topnav a{ text-decoration:none; color:#111; font-weight:600; }
+
+    /* Map fills rest of viewport */
     #map{
       height: calc(100% - 44px);
       margin-top: 44px;
     }
+
+    /* Tooltip labels */
     .leaflet-tooltip.plain-label{
       background: transparent;
       border: none;
@@ -41,6 +48,8 @@
       text-shadow: 0 0 2px #fff, 0 0 2px #fff;
     }
     .leaflet-tooltip.plain-label:before{ display: none !important; }
+
+    /* Make layers control scroll internally (not whole page) */
     .leaflet-control-layers{
       max-height: calc(100vh - 60px);
       overflow: hidden;
@@ -51,6 +60,8 @@
       overflow-x: hidden;
       padding-right: 6px;
     }
+
+    /* Group header: flex so button can sit on the right */
     .leaflet-control-layers-group-name{
       cursor: default;
       font-weight: 800;
@@ -60,12 +71,14 @@
       align-items: center;
       gap: 6px;
     }
+
+    /* Hide any built-in arrow marker from plugin (if present) */
     .leaflet-control-layers-group-name::before{
       content: "" !important;
       display: none !important;
     }
 
-    /* Our fold button */
+    /* Fold button (right) */
     .group-fold-btn{
       margin-left: auto;
       appearance: none;
@@ -83,13 +96,12 @@
       justify-content: center;
     }
     .group-fold-btn:hover{ background: #f0f0f0; }
-    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-list,
-    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-items,
-    .leaflet-control-layers-group.is-collapsed .leaflet-control-layers-group-layers{
+    .leaflet-control-layers-group.is-collapsed .group-items-wrap{
       display: none !important;
-      }
+    }
   </style>
 </head>
+
 <body>
   <nav class="topnav">
     <a href="https://mucenfere.github.io/">Home</a>
@@ -104,6 +116,7 @@
   <script>
     const map = L.map('map').setView([42, 126], 7);
 
+    // Basemaps
     const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors'
@@ -167,10 +180,21 @@
         if (!nameEl) return;
         if (nameEl.querySelector('.group-fold-btn')) return;
 
+        let wrap = groupEl.querySelector('.group-items-wrap');
+        if (!wrap) {
+          wrap = document.createElement('div');
+          wrap.className = 'group-items-wrap';
+
+          while (nameEl.nextSibling) {
+            wrap.appendChild(nameEl.nextSibling);
+          }
+          groupEl.appendChild(wrap);
+        }
+
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'group-fold-btn';
-        btn.textContent = '▾';
+        btn.textContent = groupEl.classList.contains('is-collapsed') ? '▸' : '▾';
 
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -178,27 +202,34 @@
 
           const collapsed = groupEl.classList.toggle('is-collapsed');
           btn.textContent = collapsed ? '▸' : '▾';
+          wrap.style.display = collapsed ? 'none' : '';
         });
 
         nameEl.appendChild(btn);
       });
     }
 
+
     function collapseGroupsOnStart(layerCtl, groupNames) {
       const container = layerCtl.getContainer();
       if (!container) return;
 
-      container.querySelectorAll('.leaflet-control-layers-group').forEach(groupEl => {
+      const groupEls = container.querySelectorAll('.leaflet-control-layers-group');
+
+      groupEls.forEach(groupEl => {
         const nameEl = groupEl.querySelector('.leaflet-control-layers-group-name');
         if (!nameEl) return;
-        
-        const label = (nameEl.textContent || "").replace(/[▾▸]/g, "").trim();
+
+        const label = (nameEl.textContent || '').replace(/[▾▸]/g, '').trim();
         if (!groupNames.includes(label)) return;
 
         groupEl.classList.add('is-collapsed');
 
         const btn = nameEl.querySelector('.group-fold-btn');
         if (btn) btn.textContent = '▸';
+
+        const wrap = groupEl.querySelector('.group-items-wrap');
+        if (wrap) wrap.style.display = 'none';
       });
     }
 
@@ -218,17 +249,23 @@
         })
       });
 
-      const dk_kx = await loadGeoJSON('./data/dorgi_karun_kangxi.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const dk_yz = await loadGeoJSON('./data/dorgi_karun_yongzheng.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const dk_ql = await loadGeoJSON('./data/dorgi_karun_qianlong.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const dk_jq = await loadGeoJSON('./data/dorgi_karun_jiaqing.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const tl_kx = await loadGeoJSON('./data/tulergi_karun_kangxi.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const tl_yz = await loadGeoJSON('./data/tulergi_karun_yongzheng.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const tl_ql = await loadGeoJSON('./data/tulergi_karun_qianlong.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
-      const tl_jq = await loadGeoJSON('./data/tulergi_karun_jiaqing.geojson', { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
+      // Karun points
+      const mkPt = () => ({ pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, weight: 2, fillOpacity: 0.7 }) });
+
+      const dk_kx = await loadGeoJSON('./data/dorgi_karun_kangxi.geojson', mkPt());
+      const dk_yz = await loadGeoJSON('./data/dorgi_karun_yongzheng.geojson', mkPt());
+      const dk_ql = await loadGeoJSON('./data/dorgi_karun_qianlong.geojson', mkPt());
+      const dk_jq = await loadGeoJSON('./data/dorgi_karun_jiaqing.geojson', mkPt());
+
+      const tl_kx = await loadGeoJSON('./data/tulergi_karun_kangxi.geojson', mkPt());
+      const tl_yz = await loadGeoJSON('./data/tulergi_karun_yongzheng.geojson', mkPt());
+      const tl_ql = await loadGeoJSON('./data/tulergi_karun_qianlong.geojson', mkPt());
+      const tl_jq = await loadGeoJSON('./data/tulergi_karun_jiaqing.geojson', mkPt());
+
       const admin_v1 = await loadGeoJSON('./data/admin_lv1.geojson', {
         style: { color: '#000000', weight: 4, opacity: 0.8 }
       });
+
       admin_v1.addTo(map);
 
       const wpkangxi = await loadGeoJSON('./data/willowpalisade-kangxi.geojson', { style: willowpalisade });
@@ -265,31 +302,17 @@
           "지명(1820_CHGIS)": chgistwn_pts
         }
       };
+
+      const layerCtl = L.control.groupedLayers(baseLayers, groupedOverlays, {
+        collapsed: false,
+        groupsCollapsible: false,
+        groupCheckboxes: false
+      }).addTo(map);
       
-const layerCtl = L.control.groupedLayers(baseLayers, groupedOverlays, {
-  collapsed: false,
-  groupsCollapsible: false,
-  groupCheckboxes: false
-}).addTo(map);
-
-setTimeout(() => {
-  attachGroupFoldButtons(layerCtl);
-
-  const collapseNames = ["참고자료_CHGIS (1820)"];
-  const container = layerCtl.getContainer();
-  container.querySelectorAll('.leaflet-control-layers-group').forEach(groupEl => {
-    const nameEl = groupEl.querySelector('.leaflet-control-layers-group-name');
-    if (!nameEl) return;
-
-    const label = (nameEl.textContent || "").replace(/[▾▸]/g, "").trim();
-    if (!collapseNames.includes(label)) return;
-
-    groupEl.classList.add('is-collapsed');
-
-    const btn = nameEl.querySelector('.group-fold-btn');
-    if (btn) btn.textContent = '▸';
-  });
-}, 200);
+      setTimeout(() => {
+        attachGroupFoldButtons(layerCtl);
+        collapseGroupsOnStart(layerCtl, ["참고자료_CHGIS (1820)"]);
+      }, 0);
 
     })().catch(err => {
       console.error(err);
