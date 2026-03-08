@@ -178,11 +178,11 @@
 
   <script>
     const map = L.map('map').setView([42, 126], 7);
-    map.on('click', () => {
-    highlightLayer(null);
-    closeInfoPanel();
-    });
-    
+     map.on('click', (e) => {
+     if (e.originalEvent._stopped) return; 
+     highlightLayer(null);
+     closeInfoPanel();
+     });
     const mkDivIcon = (className, size) => L.divIcon({
   className: '',
   html: `<div class="${className}"></div>`,
@@ -233,12 +233,12 @@ function highlightLayer(layer) {
     fillOpacity: layer.options.fillOpacity,
   };
   selectedLayer = layer;
-  layer.setStyle({
-    color: '#ffff00',
-    weight: 4,
-    opacity: 1,
-    fillOpacity: 0.4,
-  });
+layer.setStyle({
+  color: '#00ffff', 
+  weight: 5,
+  opacity: 1,
+  fillOpacity: 0.5,
+});
   layer.bringToFront();
 }
 
@@ -304,7 +304,8 @@ async function loadGeoJSON(url, options = {}) {
           className: 'plain-label'
         });
       }
-layer.on('click', () => {
+layer.on('click', (e) => {
+  L.DomEvent.stopPropagation(e);
   highlightLayer(layer);
   openInfoPanel(labelText, p);
 });
@@ -409,10 +410,11 @@ function makeKarunLayer(gj, { time, ztype, color }) {
       });
 
       if (typeof openInfoPanel === 'function') {
-     layer.on('click', () => {
-      highlightLayer(layer);
-      openInfoPanel(labelText, p);
-    });
+layer.on('click', (e) => {
+  L.DomEvent.stopPropagation(e);
+  highlightLayer(layer);
+  openInfoPanel(labelText, p); 
+});
       }
     }
   });
