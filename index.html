@@ -156,13 +156,13 @@
 .info-body td{ padding:4px 0; word-break: break-word; }
 .marker-selected-png {
   filter: drop-shadow(0 0 4px #00ffff) drop-shadow(0 0 8px #00ffff) drop-shadow(0 0 12px #00ffff) drop-shadow(0 0 16px #00ffff) !important;
-  transform: scale(1.6);
+  transform: scale(1.2);
   transform-origin: center;
 }
 
 /* div 아이콘 선택 강조 (admin-dot, 삼각형) */
 .marker-selected-div > div {
-  transform: scale(1.6);
+  transform: scale(1.2);
   transform-origin: center;
 }
 .marker-selected-div .admin-dot {
@@ -172,8 +172,8 @@
 }
 .marker-selected-div .tri {
   --tri: #00ffff !important;
-  width: 18px !important;
-  height: 18px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
     
   </style>
@@ -275,7 +275,7 @@ function highlightLayer(layer) {
       radius: layer.options.radius,
     };
     layer.setStyle({ color: '#00ffff', fillColor: '#00ffff', fillOpacity: 1, weight: 2 });
-    layer.setRadius(6);
+    layer.setRadius(4);
     return;
   }
 
