@@ -66,6 +66,7 @@
     .table-wrap { overflow-x: auto; }
     table {
       width: 100%; border-collapse: collapse;
+      table-layout: fixed;
       background: #fff; border: 1px solid #e0e0e0;
       border-radius: 8px; overflow: hidden; font-size: 13px;
     }
@@ -99,7 +100,7 @@
     td.manchu { font-family: monospace; color: #444; white-space: nowrap; }
     td.time   { color: #555; white-space: nowrap; }
     td.type   { color: #555; white-space: nowrap; }
-    td.desc   { color: #555; word-break: break-word; min-width: 200px; }
+    td.desc   { color: #555; word-break: break-word; overflow-wrap: break-word; }
     td.actions { white-space: nowrap; }
 
     .btn-edit, .btn-del {
