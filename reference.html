@@ -41,8 +41,8 @@
     col.col-thumb  { width: 392px; }
     col.col-title  { width: 200px; }
     col.col-date   { width: 120px; }
-    col.col-source { }
-    col.col-repo   { width: 155px; }
+    col.col-source { width: 180px; }
+    col.col-repo   { width: 240px; }
 
     thead th {
       background: #f0f0ee; text-align: left;
@@ -121,17 +121,8 @@
     td.col-date   { color: #555; white-space: nowrap; }
     td.col-source { color: #555; word-break: break-word; }
 
-    /* Repository tag */
-    td.col-repo { }
-    .tag-repo {
-      display: inline-block;
-      padding: 2px 8px;
-      background: #f0f0ee;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 12px;
-      color: #555;
-    }
+    /* Repository */
+    td.col-repo { color: #555; word-break: break-word; }
 
     /* Note */
     .table-note {
@@ -154,7 +145,7 @@
 
   <main>
     <h1>Reference <span style="font-weight:400;color:#888">參考文獻</span></h1>
-    <p class="subtitle">참고 지도 목록. 썸네일 또는 제목을 클릭하면 원본 자료 페이지로 이동합니다. 온라인 공개 자료가 아닌 경우 링크가 제공되지 않을 수 있습니다. — <span id="ref-count">…</span></p>
+    <p class="subtitle">참고한 지도 자료 목록. 썸네일 또는 제목을 클릭하면 원본 자료 페이지로 이동합니다. — <span id="ref-count">…</span></p>
 
     <div class="table-wrap">
       <table id="ref-table">
@@ -194,7 +185,7 @@
             </td>
             <td class="col-date">1700년대 초</td>
             <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">규장각</span></td>
+            <td class="col-repo">규장각</td>
           </tr>
 
           <!-- ════ 항목 2 ════ -->
@@ -213,7 +204,7 @@
             </td>
             <td class="col-date">1800년대 중반</td>
             <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">국립중앙도서관</span></td>
+            <td class="col-repo">국립중앙도서관</td>
           </tr>
 
           <!-- ════ 항목 3 (링크 없는 경우) ════ -->
@@ -227,7 +218,7 @@
             </td>
             <td class="col-date">연대 미상</td>
             <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
+            <td class="col-repo">소장처 입력</td>
           </tr>
 
           <!-- ════ 항목 4 (링크 없는 경우) ════ -->
@@ -241,8 +232,9 @@
             </td>
             <td class="col-date">연대 미상</td>
             <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
+            <td class="col-repo">소장처 입력</td>
           </tr>
+
 
           <!-- ════ 항목 5 (링크 없는 경우) ════ -->
           <tr>
@@ -255,49 +247,7 @@
             </td>
             <td class="col-date">연대 미상</td>
             <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
-          </tr>
-
-          <!-- ════ 항목 6 (링크 없는 경우) ════ -->
-          <tr>
-            <td class="col-no">3</td>
-            <td class="col-thumb">
-              <span class="thumb-placeholder">No Image</span>
-            </td>
-            <td class="col-title">
-              지도 제목을 입력하세요
-            </td>
-            <td class="col-date">연대 미상</td>
-            <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
-          </tr>
-
-          <!-- ════ 항목 7 (링크 없는 경우) ════ -->
-          <tr>
-            <td class="col-no">3</td>
-            <td class="col-thumb">
-              <span class="thumb-placeholder">No Image</span>
-            </td>
-            <td class="col-title">
-              지도 제목을 입력하세요
-            </td>
-            <td class="col-date">연대 미상</td>
-            <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
-          </tr>
-          
-          <!-- ════ 항목 8 (링크 없는 경우) ════ -->
-          <tr>
-            <td class="col-no">3</td>
-            <td class="col-thumb">
-              <span class="thumb-placeholder">No Image</span>
-            </td>
-            <td class="col-title">
-              지도 제목을 입력하세요
-            </td>
-            <td class="col-date">연대 미상</td>
-            <td class="col-source">수록자료명 / 권호를 입력하세요</td>
-            <td class="col-repo"><span class="tag-repo">소장처 입력</span></td>
+            <td class="col-repo">소장처 입력</td>
           </tr>
 
         </tbody>
