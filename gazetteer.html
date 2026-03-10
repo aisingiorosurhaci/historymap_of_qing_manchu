@@ -76,22 +76,18 @@
       border-bottom: 1px solid #ddd; white-space: nowrap;
       user-select: none;
     }
-    /* 정렬 가능한 헤더 */
     th.sortable { cursor: pointer; }
     th.sortable:hover { background: #e4e4e0; }
-    th.sortable .sort-icon { margin-left: 5px; color: #aaa; font-size: 11px; }
-    th.sortable.asc  .sort-icon::after { content: '▲'; color: #333; }
-    th.sortable.desc .sort-icon::after { content: '▼'; color: #333; }
-    th.sortable:not(.asc):not(.desc) .sort-icon::after { content: '⇅'; }
 
     /* 컬럼 너비 */
-    col.col-id      { width: 48px;  }
-    col.col-hanja   { width: 120px; }
-    col.col-manchu  { width: 160px; }
-    col.col-time    { width: 110px; }
-    col.col-type    { width: 80px; }
-    col.col-desc    { width: auto;  }
-    col.col-actions { width: 90px;  }
+    col.col-id       { width: 48px;  }
+    col.col-hanja    { width: 120px; }
+    col.col-manchu   { width: 160px; }
+    col.col-time     { width: 110px; }
+    col.col-type     { width: 80px;  }
+    col.col-desc     { width: auto;  }
+    col.col-trust    { width: 80px;  }
+    col.col-actions  { width: 90px;  }
 
     tbody tr { border-bottom: 1px solid #f0f0ee; }
     tbody tr:last-child { border-bottom: none; }
@@ -103,6 +99,7 @@
     td.time   { color: #555; white-space: nowrap; }
     td.type   { color: #555; white-space: nowrap; }
     td.desc   { color: #555; word-break: break-word; overflow-wrap: break-word; }
+    td.trust  { color: #555; white-space: nowrap; text-align: center; }
     td.actions { white-space: nowrap; }
 
     .btn-edit, .btn-del {
@@ -116,19 +113,10 @@
     .empty-row td { text-align: center; color: #999; padding: 32px; }
 
     /* ── Sortable headers ── */
-    thead th.sortable {
-      cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-    }
+    thead th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
     thead th.sortable:hover { background: #e4e4e0; }
-    thead th .sort-arrow {
-      display: inline-block;
-      margin-left: 5px;
-      color: #aaa;
-      font-size: 11px;
-    }
-    thead th.sort-asc .sort-arrow { color: #111; }
+    thead th .sort-arrow { display: inline-block; margin-left: 5px; color: #aaa; font-size: 11px; }
+    thead th.sort-asc .sort-arrow  { color: #111; }
     thead th.sort-desc .sort-arrow { color: #111; }
 
     /* ── Modal ── */
@@ -217,6 +205,7 @@
           <col class="col-time">
           <col class="col-type">
           <col class="col-desc">
+          <col class="col-trust">
           <col class="col-actions">
         </colgroup>
         <thead>
@@ -226,12 +215,13 @@
             <th class="sortable" data-col="manchu">지명_만주어<span class="sort-arrow"> ⇅</span></th>
             <th class="sortable" data-col="time">시간 레이어<span class="sort-arrow"> ⇅</span></th>
             <th class="sortable" data-col="type">유형<span class="sort-arrow"> ⇅</span></th>
-            <th>설명</th>
+            <th>위치 비정 근거</th>
+            <th class="sortable" data-col="trust" style="text-align:center">신뢰도<span class="sort-arrow"> ⇅</span></th>
             <th id="actionsHeader" style="display:none">작업</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr class="empty-row"><td colspan="7">불러오는 중…</td></tr>
+          <tr class="empty-row"><td colspan="8">불러오는 중…</td></tr>
         </tbody>
       </table>
     </div>
@@ -249,8 +239,10 @@
       <input type="text" id="fTime" placeholder="예: 강희말기, 건륭중기 등" />
       <label>유형</label>
       <input type="text" id="fType" placeholder="예: 변내카룬, 변외카룬, 邊臺 등" />
-      <label>설명</label>
+      <label>위치 비정 근거</label>
       <textarea id="fDesc" placeholder="위치 비정 근거, 사료 출처, 관련 카룬 등"></textarea>
+      <label>신뢰도</label>
+      <input type="text" id="fTrust" placeholder="예: 高, 中, 低" />
       <div class="modal-actions">
         <button class="btn-cancel" id="modalCancel">취소</button>
         <button class="btn-save"   id="modalSave">저장</button>
@@ -272,7 +264,6 @@
     let editingId = null;
     let authed    = false;
 
-    // 정렬 상태: { col: 'hanja'|'manchu'|null, dir: 'asc'|'desc' }
     let sortState = { col: null, dir: 'asc' };
 
     // ── Elements ──
@@ -292,6 +283,7 @@
     const fTime         = document.getElementById('fTime');
     const fType         = document.getElementById('fType');
     const fDesc         = document.getElementById('fDesc');
+    const fTrust        = document.getElementById('fTrust');
     const toastEl       = document.getElementById('toast');
 
     // ── Toast ──
@@ -319,13 +311,11 @@
     }
 
     async function fetchFile() {
-      // 읽기는 raw URL 사용 (rate limit 없음, 토큰 불필요)
       const rawUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${PATH}?t=${Date.now()}`;
       const res = await fetch(rawUrl);
       if (res.status === 404) { fileSha = ''; return []; }
       if (!res.ok) throw new Error(`데이터 불러오기 실패: ${res.status}`);
       const data = await res.json();
-      // SHA는 저장 시 필요하므로 API로 별도 조회
       fetchSha();
       return data;
     }
@@ -356,24 +346,22 @@
       fileSha = data.content.sha;
     }
 
-    // ── Sort ──
+    // ── Sort & Filter ──
     function getSortedFiltered(filter) {
       const q = filter.trim().toLowerCase();
-      // seq(원래 순서) 부여
       const withSeq = entries.map((e, i) => ({ ...e, seq: i + 1 }));
-
       let list = q
         ? withSeq.filter(e =>
             (e.hanja  || '').toLowerCase().includes(q) ||
             (e.manchu || '').toLowerCase().includes(q) ||
             (e.time   || '').toLowerCase().includes(q) ||
             (e.type   || '').toLowerCase().includes(q) ||
-            (e.desc   || '').toLowerCase().includes(q))
+            (e.desc   || '').toLowerCase().includes(q) ||
+            (e.trust  || '').toLowerCase().includes(q))
         : [...withSeq];
 
       if (sortState.col) {
         list.sort((a, b) => {
-          // seq는 숫자 비교
           if (sortState.col === 'seq') {
             return sortState.dir === 'asc' ? a.seq - b.seq : b.seq - a.seq;
           }
@@ -387,7 +375,7 @@
       return list;
     }
 
-    // ── Render table ──
+    // ── Render ──
     function renderTable(filter = '') {
       document.querySelectorAll('th.sortable').forEach(th => {
         th.classList.remove('sort-asc', 'sort-desc');
@@ -401,10 +389,9 @@
       });
 
       const list = getSortedFiltered(filter);
-
       if (list.length === 0) {
         const msg = filter.trim() ? '검색 결과 없음' : '항목이 없습니다. 항목을 추가해보세요.';
-        tableBody.innerHTML = `<tr class="empty-row"><td colspan="7">${msg}</td></tr>`;
+        tableBody.innerHTML = `<tr class="empty-row"><td colspan="8">${msg}</td></tr>`;
         return;
       }
 
@@ -416,6 +403,7 @@
           <td class="time">${esc(e.time)}</td>
           <td class="type">${esc(e.type)}</td>
           <td class="desc">${esc(e.desc)}</td>
+          <td class="trust">${esc(e.trust)}</td>
           <td class="actions"${authed ? '' : ' style="display:none"'}>
             <button class="btn-edit" data-id="${e.id}">수정</button>
             <button class="btn-del"  data-id="${e.id}">삭제</button>
@@ -429,7 +417,6 @@
       th.addEventListener('click', () => {
         const col = th.dataset.col;
         if (sortState.col === col) {
-          // 같은 컬럼: asc → desc → 해제
           if (sortState.dir === 'asc')       sortState.dir = 'desc';
           else if (sortState.dir === 'desc') { sortState.col = null; sortState.dir = 'asc'; }
         } else {
@@ -459,7 +446,7 @@
         addBtn.disabled = false;
         actionsHeader.style.display = '';
         tokenInput.value = '';
-        await fetchSha(); // 저장에 필요한 SHA 확보
+        await fetchSha();
         renderTable(searchInput.value);
         showToast(`${user.login} 로 로그인 완료`);
       } catch {
@@ -478,7 +465,7 @@
     // ── Add ──
     addBtn.addEventListener('click', () => openModal(null));
 
-    // ── Table click (edit / delete) ──
+    // ── Table click ──
     tableBody.addEventListener('click', e => {
       const id = e.target.dataset.id;
       if (!id) return;
@@ -497,9 +484,10 @@
         fTime.value   = entry.time   || '';
         fType.value   = entry.type   || '';
         fDesc.value   = entry.desc   || '';
+        fTrust.value  = entry.trust  || '';
       } else {
         modalTitle.textContent = '항목 추가';
-        fHanja.value = fManchu.value = fTime.value = fType.value = fDesc.value = '';
+        fHanja.value = fManchu.value = fTime.value = fType.value = fDesc.value = fTrust.value = '';
       }
       modalBackdrop.classList.add('open');
       fHanja.focus();
@@ -520,7 +508,7 @@
         let newEntries;
         if (editingId) {
           newEntries = entries.map(e => e.id === editingId
-            ? { ...e, hanja, manchu: fManchu.value.trim(), time: fTime.value.trim(), type: fType.value.trim(), desc: fDesc.value.trim() }
+            ? { ...e, hanja, manchu: fManchu.value.trim(), time: fTime.value.trim(), type: fType.value.trim(), desc: fDesc.value.trim(), trust: fTrust.value.trim() }
             : e);
           await saveFile(newEntries, `gazetteer: update "${hanja}"`);
           entries = newEntries;
@@ -528,7 +516,7 @@
         } else {
           const newEntry = {
             id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-            hanja, manchu: fManchu.value.trim(), time: fTime.value.trim(), type: fType.value.trim(), desc: fDesc.value.trim()
+            hanja, manchu: fManchu.value.trim(), time: fTime.value.trim(), type: fType.value.trim(), desc: fDesc.value.trim(), trust: fTrust.value.trim()
           };
           newEntries = [...entries, newEntry];
           await saveFile(newEntries, `gazetteer: add "${hanja}"`);
@@ -567,7 +555,7 @@
         entries = await fetchFile();
         renderTable();
       } catch(err) {
-        tableBody.innerHTML = `<tr class="empty-row"><td colspan="4">데이터 불러오기 실패: ${err.message}</td></tr>`;
+        tableBody.innerHTML = `<tr class="empty-row"><td colspan="8">데이터 불러오기 실패: ${err.message}</td></tr>`;
       }
     })();
 
