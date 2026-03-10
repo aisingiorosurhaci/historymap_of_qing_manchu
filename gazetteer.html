@@ -319,17 +319,25 @@
     }
 
     async function fetchFile() {
-      const url = `https://api.github.com/repos/${REPO}/contents/${PATH}?ref=${BRANCH}&t=${Date.now()}`;
-      const headers = token
-        ? apiHeaders()
-        : { 'Accept': 'application/vnd.github+json' };
-      const res = await fetch(url, { headers });
+      // 읽기는 raw URL 사용 (rate limit 없음, 토큰 불필요)
+      const rawUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${PATH}?t=${Date.now()}`;
+      const res = await fetch(rawUrl);
       if (res.status === 404) { fileSha = ''; return []; }
-      if (!res.ok) throw new Error(`GitHub API 오류: ${res.status}`);
+      if (!res.ok) throw new Error(`데이터 불러오기 실패: ${res.status}`);
       const data = await res.json();
-      fileSha = data.sha;
-      const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-      return JSON.parse(decoded);
+      // SHA는 저장 시 필요하므로 API로 별도 조회
+      fetchSha();
+      return data;
+    }
+
+    async function fetchSha() {
+      if (!token) return;
+      const url = `https://api.github.com/repos/${REPO}/contents/${PATH}?ref=${BRANCH}`;
+      const res = await fetch(url, { headers: apiHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        fileSha = data.sha;
+      }
     }
 
     async function saveFile(newEntries, commitMsg) {
@@ -451,6 +459,7 @@
         addBtn.disabled = false;
         actionsHeader.style.display = '';
         tokenInput.value = '';
+        await fetchSha(); // 저장에 필요한 SHA 확보
         renderTable(searchInput.value);
         showToast(`${user.login} 로 로그인 완료`);
       } catch {
